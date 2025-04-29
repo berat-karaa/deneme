@@ -1,14 +1,17 @@
+
 <?php
-// Kullanıcıdan gelen veriyi doğrudan SQL sorgusuna yerleştiriyor - TEHLİKELİ
-$conn = mysqli_connect("localhost", "root", "", "test");
+$conn = new mysqli("localhost", "root", "", "test");
+
+$stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+$stmt->bind_param("ss", $username, $password);
 
 $username = $_GET['username'];
 $password = $_GET['password'];
+$stmt->execute();
 
-$sql = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
-$result = mysqli_query($conn, $sql);
+$result = $stmt->get_result();
 
-if (mysqli_num_rows($result) > 0) {
+if ($result->num_rows > 0) {
     echo "Giriş başarılı!";
 } else {
     echo "Hatalı kullanıcı adı veya şifre!";
